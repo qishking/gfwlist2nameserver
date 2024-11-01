@@ -1,22 +1,24 @@
 #! /usr/bin/python
 
-import urllib.request
 import base64
 import re
-import os
 
-# 0.
-# gfwlst国内下载地址
-GFWLST_URL = "https://gitlab.com/gfwlist/gfwlist/raw/master/gfwlist.txt"
 
 # openwrt直接存到/etc/smartdns/address.conf,记得备份原文件
 OUTPUT_FILE_PATH = 'gfwlist.conf'
+
+# 0. fetch origin gfwlist
+# origin gfwlst path
+ori_gfwlst = 'gfwlist.txt'
 
 # 可以设置为/var/temp目录
 TEMP_FILE_PATH = 'tmp_gfwlist.txt'
 
 # 保存到set去掉重复数据
 pure_dn_data = set()
+
+# domain name only
+dn_only = 'domain_name_only.txt'
 
 # 匹配域名的正则表达式
 # python 3.11以下版本用这个简化正则表达式
@@ -25,15 +27,11 @@ pure_dn_data = set()
 pattern_dn = r'((?!-)[A-Za-z0-9-]{1,63}(?<!-)\.)+[A-Za-z]{2,6}'
 
 
-# 1. 下载gfwlst
-try:
-    with urllib.request.urlopen(GFWLST_URL) as req:
-        with open(file=TEMP_FILE_PATH, mode='w', encoding='utf-8') as f:
-            d = base64.b64decode(req.read())
-            f.write(d.decode('utf-8'))
-except urllib.error.HTTPError as e:
-    print(e.code)
-    raise
+# 1. 直接使用github上原始版gfwlst
+with open(ori_gfwlst, 'r') as ori_f:
+    with open(file=TEMP_FILE_PATH, mode='w', encoding='utf-8') as f:
+        d = base64.b64decode(ori_f.read())
+        f.write(d.decode('utf-8'))
 
 
 # 2. 提取域名
@@ -48,11 +46,11 @@ with open(TEMP_FILE_PATH, 'r') as f:
         else:
             break
 
-# 3. 写入配置文件
+# 3. 保存一份只有域名的文件
+with open(file=dn_only, mode='w', encoding='utf-8') as f:
+    f.write('\n'.join(pure_dn_data))
+
+# 4. 写入配置文件
 with open(file=OUTPUT_FILE_PATH, mode='w', encoding='utf-8') as f:
     ns_data = (f'nameserver /{dn}/GFW' for dn in pure_dn_data)
     f.write('\n'.join(ns_data))
-
-
-# 4. smartdns reload配置文件
-os.system('service smartdns reload')
