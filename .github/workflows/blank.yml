@@ -23,14 +23,13 @@ jobs:
     # Steps represent a sequence of tasks that will be executed as part of the job
     steps:
       # Checks-out your repository under $GITHUB_WORKSPACE, so your job can access it
-      - uses: gfwlist/gfwlist@master
       - uses: actions/checkout@master
       - uses: actions/setup-python@v5 
         with:
           python-version: '3.12'
       # Runs a single command using the runners shell
       - name: Run a one-line script
-        run: python get_gfwlist_for_action.py
+        run: python get_gfwlist.py
 
       - name: push
         uses: stefanzweifel/git-auto-commit-action@v4
