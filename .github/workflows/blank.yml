@@ -16,6 +16,14 @@ on:
 # A workflow run is made up of one or more jobs that can run sequentially or in parallel
 jobs:
   # This workflow contains a single job called "build"
+  set-timestamp:
+    runs-on: ubuntu-latest
+    outputs:
+      steps: ${{ steps.timestamp.outputs }}
+    steps:
+      - name: Set Timestamp
+        id: timestamp
+        run: echo "TIMESTAMP=$(date +"%Y%m%d%H%M%S")" >> $GITHUB_ENV
   build:
     # The type of runner that the job will run on
     runs-on: ubuntu-latest
@@ -31,9 +39,7 @@ jobs:
       - name: Run a one-line script
         run: python get_gfwlist.py
 
-      - name: Insert date time
-        run: CURRENT_DATETIME=$(date '+%Y-%m-%d %H:%M:%S')
       - name: push
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Auto Update ${{ CURRENT_DATETIME }}"
+          commit_message: "Auto Update ${{ TIMESTAMP }}"
