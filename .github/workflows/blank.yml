@@ -40,7 +40,7 @@ jobs:
         run: python get_gfwlist.py
 
       - name: push
-        need: timestamp
+        needs: set-timestamp
         uses: stefanzweifel/git-auto-commit-action@v5
         with:
-          commit_message: "Auto Update ${{ TIMESTAMP }}"
+          commit_message: "Auto Update $TIMESTAMP"
