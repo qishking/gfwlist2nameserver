@@ -18,8 +18,6 @@ jobs:
   # This workflow contains a single job called "build"
   set-timestamp:
     runs-on: ubuntu-latest
-    outputs:
-      steps: ${{ steps.timestamp.outputs }}
     steps:
       - name: Set Timestamp
         id: timestamp
