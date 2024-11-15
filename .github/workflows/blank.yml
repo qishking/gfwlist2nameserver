@@ -34,8 +34,7 @@ jobs:
         with:
           python-version: '3.12'
       # Runs a single command using the runners shell
-      - name: Run a one-line script
-        run: python get_gfwlist.py
+      - run: python get_gfwlist.py
       - run: python get_publicip.py
 
       - name: push
